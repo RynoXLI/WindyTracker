@@ -82,7 +82,7 @@ class SimpleAPI:
         Returns:
             dict: json response
         """
-        params = copy.deepcopy(params)
+        params = copy.deepcopy(self._params)
         if unixTime:
             params["unixTime"] = unixTime
         r = requests.get(self._format_url(ApiRoutes.TIME, params))

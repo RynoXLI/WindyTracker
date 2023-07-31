@@ -1,7 +1,13 @@
+"""
+Simple package setup script, built to handle finding CTA package.
+
+Author: Ryan Fogle
+"""
+
 from setuptools import setup, find_packages
 setup(
     name="CTA",
     version="0.1.alpha",
-    packages=find_packages(),
+    packages=['cta'],
     python_requires=">=3.10, <4",
 )
