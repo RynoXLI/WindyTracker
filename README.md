@@ -20,4 +20,15 @@ tracker.getroutes()
 
 ## TODO:
 - Finish implementing typedapi.py
-- 
+
+
+## Generate Documentation
+
+Run the following:
+```python
+pip install pdoc3
+
+pdoc --html cta
+```
+
+Open `./html/index.html`
