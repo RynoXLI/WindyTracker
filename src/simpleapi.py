@@ -1,3 +1,8 @@
+"""
+File meant to hold the SimpleAPI object.
+
+Author: Ryan Fogle
+"""
 import requests
 from pydantic import validate_arguments
 from urllib.parse import urlencode
@@ -5,6 +10,8 @@ import copy
 
 
 class ApiRoutes:
+    """Class holding all of the subroutes for the CTA HTTP URL"""
+
     DATA_FEEDS = "getrtpidatafeeds"
     TIME = "gettime"
     VEHICLES = "getvehicles"
@@ -24,6 +31,13 @@ class ApiArgumentError(Exception):
 
 
 class SimpleAPI:
+    """Simple class built to handle validating and returning CTA responses. Very closely resembles how the API is built.
+
+    Example usage:
+    >>> cta = SimpleAPI(key='secret_key')
+    >>> cta.getroutes()
+    """
+
     @validate_arguments
     def __init__(
         self,
