@@ -139,7 +139,7 @@ class SimpleAPI:
             params["vid"] = vid
 
         if isinstance(rt, list):
-            if len(vid) > 10:
+            if len(rt) > 10:
                 raise ApiArgumentError(
                     "Please only provide 10 identifiers for rt argument."
                 )

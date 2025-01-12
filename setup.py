@@ -7,7 +7,7 @@ Author: Ryan Fogle
 from setuptools import setup, find_packages
 setup(
     name="CTA",
-    version="0.1.alpha",
+    version="0.2.alpha",
     packages=['cta'],
     python_requires=">=3.10, <4",
 )

@@ -161,3 +161,9 @@ cython_debug/
 
 # ignore pdoc
 html/
+
+# ignore data
+*.json
+*.zip
+*.txt
+*.htm
