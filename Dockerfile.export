@@ -1,0 +1,10 @@
+from python:3.11-slim
+
+# Install dependencies
+COPY requirements.txt .
+COPY export.py .
+COPY simpleapi.py .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Run the exporter
+CMD ["python", "export.py"]

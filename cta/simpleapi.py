@@ -7,6 +7,8 @@ import requests
 from pydantic import validate_arguments
 from urllib.parse import urlencode
 import copy
+import aiohttp
+import asyncio
 
 
 class ApiRoutes:
@@ -454,3 +456,222 @@ class SimpleAPI:
     def getagencies(self) -> dict:
         r = requests.get(self._format_url(ApiRoutes.AGENCIES))
         return r.json()
+
+
+class AsyncSimpleAPI(SimpleAPI):
+    """Asynchronous version of SimpleAPI using aiohttp."""
+
+    async def _fetch(self, url: str) -> dict:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                return await response.json()
+    
+    @validate_arguments
+    async def gettime(self, unixTime=False) -> dict:
+        params = copy.deepcopy(self._params)
+        if unixTime:
+            params["unixTime"] = unixTime
+        url = self._format_url(ApiRoutes.TIME, params)
+        return await self._fetch(url)
+    
+    async def getrtpidatafeeds(self) -> dict:
+        url = self._format_url(ApiRoutes.DATA_FEEDS)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getvehicles(self, vid: str | list[str] | None = None, rt: str | list[str] | None = None, tmres: str = "s") -> dict:
+        params = copy.deepcopy(self._params)
+        params["tmres"] = tmres
+
+        if vid is None and rt is None:
+            raise ApiArgumentError("Please only provide vid or rt argument, not both.")
+        elif vid is not None and rt is not None:
+            raise ApiArgumentError("Please only provide vid or rt argument, not both.")
+
+        if isinstance(vid, list):
+            if len(vid) > 10:
+                raise ApiArgumentError("Please only provide 10 identifiers for vid argument.")
+            vid = ",".join(vid)
+        elif isinstance(vid, str):
+            if len(vid.split(",")) > 10:
+                raise ApiArgumentError("Please only provide 10 identifiers for vid argument.")
+            params["vid"] = vid
+
+        if isinstance(rt, list):
+            if len(rt) > 10:
+                raise ApiArgumentError("Please only provide 10 identifiers for rt argument.")
+            rt = ",".join(rt)
+        elif isinstance(rt, str):
+            if len(rt.split(",")) > 10:
+                raise ApiArgumentError("Please only provide 10 identifiers for rt argument.")
+            params["rt"] = rt
+
+        url = self._format_url(ApiRoutes.VEHICLES, params)
+        return await self._fetch(url)
+
+    async def getroutes(self) -> dict:
+        url = self._format_url(ApiRoutes.ROUTES)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getdirections(self, rt: str) -> dict:
+        params = copy.deepcopy(self._params)
+
+        if len(rt.split(",")) > 1:
+            raise ApiArgumentError("Please only provide on route (rt).")
+
+        params["rt"] = rt
+        url = self._format_url(ApiRoutes.DIRECTIONS, params)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getstops(self, rt: str | None = None, dir: str | None = None, stpid: str | list[str] | None = None) -> dict:
+        params = copy.deepcopy(self._params)
+
+        if (rt is None and dir is None and stpid is None) or ((rt is not None or dir is not None) and stpid is not None):
+            raise ApiArgumentError("Please provide either one rt and dir, or up to 10 stpids arguments.")
+        elif stpid is not None:
+            if isinstance(stpid, str):
+                if len(stpid.split(",")) > 10:
+                    raise ApiArgumentError("Please only provide up to 10 stpids.")
+                params["stpid"] = stpid
+            elif len(stpid) > 10:
+                raise ApiArgumentError("Please only provide up to 10 stpids.")
+            else:
+                params["stpid"] = ",".join(stpid)
+        elif rt is not None:
+            if len(rt.split(",")) > 1:
+                raise ApiArgumentError("Please only provide 1 route (rt).")
+            if dir is None:
+                raise ApiArgumentError("Please provide dir when also providing rt.")
+            params["rt"] = rt
+            params["dir"] = dir
+        elif rt is None:
+            raise ApiArgumentError("Please provide rt when providing dir.")
+
+        url = self._format_url(ApiRoutes.STOPS, params)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getpatterns(self, pid: str | list[str] | None = None, rt: str | list[str] | None = None) -> dict:
+        params = copy.deepcopy(self._params)
+        if pid is None and rt is None:
+            raise ApiArgumentError("Please only provide pid or rt argument.")
+        elif pid is not None and rt is not None:
+            raise ApiArgumentError("Please only provide pid or rt argument")
+        elif pid is not None:
+            if isinstance(pid, str):
+                if len(pid.split(",")) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less pid arguments.")
+                params["pid"] = pid
+            else:
+                if len(pid) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less pid arguments.")
+                params["pid"] = ",".join(pid)
+        else:
+            if isinstance(rt, str):
+                if len(rt.split(",")) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less rt arguments.")
+                params["rt"] = rt
+            else:
+                if len(rt) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less rt arguments.")
+                params["rt"] = ",".join(rt)
+        url = self._format_url(ApiRoutes.PATTERNS, params)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getpredictions(self, stpid: str | list[str] | None = None, rt: str | list[str] | None = None, vid: str | list[str] | None = None, top: int | None = None, tmres: str = "s") -> dict:
+        params = copy.deepcopy(self._params)
+
+        if stpid is None and vid is None:
+            raise ApiArgumentError("Please provide either stpid or vid arguments.")
+        elif stpid is not None and vid is not None:
+            raise ApiArgumentError("Please provide either stpid or vid arguments.")
+        elif stpid is not None:
+            if isinstance(stpid, str):
+                if len(stpid.split(",")) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less stpid arguments.")
+                params["stpid"] = stpid
+            else:
+                if len(stpid) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less stpid arguments.")
+                params["stpid"] = ",".join(stpid)
+
+            if rt is not None:
+                params["rt"] = rt
+        elif vid is not None:
+            if rt is not None:
+                raise ApiArgumentError("Please do not provide rt with vid")
+            if isinstance(vid, str):
+                if len(vid.split(",")) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less vid arguments.")
+                params["vid"] = vid
+            else:
+                if len(vid) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less vid arguments.")
+                params["vid"] = ",".join(vid)
+
+        if top:
+            params["top"] = top
+        params["tmres"] = tmres
+
+        url = self._format_url(ApiRoutes.PREDICTIONS, params)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getservicebulletins(self, rt: str | list[str] | None = None, rtdir: str | None = None, stpid: str | list[str] | None = None) -> dict:
+        params = copy.deepcopy(self._params)
+
+        if (rt is None and stpid is None) or (rt is not None and stpid is not None):
+            raise ApiArgumentError("Please provide either stpid or rt arguments.")
+        elif rt is not None:
+            if rtdir is not None:
+                if (isinstance(rt, str) and len(rt.split(",")) > 1) or (len(rt) > 1):
+                    raise ApiArgumentError("Please only provide 1 rt when rtdir argument is provided.")
+                params["rtdir"] = rtdir
+
+            if isinstance(rt, str):
+                if len(rt.split(",")) > 10:
+                    raise ApiArgumentError("Please only provide 10 or less rt arguments.")
+                params["rt"] = rt
+            elif len(rt) > 10:
+                raise ApiArgumentError("Please only provide 10 or less rt arguments.")
+            else:
+                params["rt"] = ",".join(rt)
+        elif isinstance(stpid, str):
+            if len(stpid.split(",")) > 10:
+                raise ApiArgumentError("Please only provide 10 or less stpid arguments.")
+            params["stpid"] = stpid
+        elif len(stpid) > 10:
+            raise ApiArgumentError("Please only provide 10 or less stpid arguments.")
+        else:
+            params["stpid"] = ",".join(stpid)
+        url = self._format_url(ApiRoutes.BULLETINS, params)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getlocalelist(self, inlocalLanguge: bool = False) -> dict:
+        params = copy.deepcopy(self._params)
+        if inlocalLanguge:
+            params["inLocaleLanguage"] = inlocalLanguge
+        url = self._format_url(ApiRoutes.LOCALES, params)
+        return await self._fetch(url)
+
+    @validate_arguments
+    async def getdetours(self, rt: str | None = None, rtdir: str | None = None) -> dict:
+        params = copy.deepcopy(self._params)
+
+        if rt:
+            if len(rt.split(",")) > 1:
+                raise ApiArgumentError("Please only provide 1 rt.")
+            if rtdir:
+                params["rtdir"] = rtdir
+            params["rt"] = rt
+
+        url = self._format_url(ApiRoutes.DETOURS, params)
+        return await self._fetch(url)
+
+    async def getagencies(self) -> dict:
+        url = self._format_url(ApiRoutes.AGENCIES)
+        return await self._fetch(url)

@@ -1,0 +1,14 @@
+services:
+  # web:
+  #   build: .
+  #   command: python export.py
+  mongodb:
+    image: mongo
+    container_name: cta-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - ./data:/data/db
