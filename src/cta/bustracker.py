@@ -30,11 +30,11 @@ class ApiArgumentError(Exception):
     """Argument raised when there is an input error"""
 
 
-class SimpleAPI:
+class BusTracker:
     """Simple class built to handle validating and returning CTA responses. Very closely resembles how the API is built.
 
     Example usage:
-    >>> cta = SimpleAPI(key='secret_key')
+    >>> cta = BusTracker(key='secret_key')
     >>> cta.getroutes()
     """
 
