@@ -1,0 +1,17 @@
+[project]
+name = "cta"
+version = "0.2.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Ryan Fogle", email = "ryanfogle98@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "pydantic>=2.11.3",
+    "requests>=2.32.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
