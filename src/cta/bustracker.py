@@ -3,6 +3,7 @@ File meant to hold the SimpleAPI object.
 
 Author: Ryan Fogle
 """
+
 import requests
 from pydantic import validate_arguments
 from urllib.parse import urlencode
@@ -426,7 +427,12 @@ class BusTracker:
         return r.json()
 
     @validate_arguments
-    def getdetours(self, rt: str | None = None, rtdir: str | None = None, rtpidatafeed: str | None = None) -> dict:
+    def getdetours(
+        self,
+        rt: str | None = None,
+        rtdir: str | None = None,
+        rtpidatafeed: str | None = None,
+    ) -> dict:
         """Get route detours.
 
         Args:
@@ -448,7 +454,7 @@ class BusTracker:
             if rtdir:
                 params["rtdir"] = rtdir
             params["rt"] = rt
-        
+
         if rtpidatafeed:
             params["rtpidatafeed"] = rtpidatafeed
 
