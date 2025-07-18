@@ -426,12 +426,13 @@ class BusTracker:
         return r.json()
 
     @validate_arguments
-    def getdetours(self, rt: str | None = None, rtdir: str | None = None) -> dict:
+    def getdetours(self, rt: str | None = None, rtdir: str | None = None, rtpidatafeed: str | None = None) -> dict:
         """Get route detours.
 
         Args:
             rt (str | None): route id, single route only. Defaults to None.
             rtdir (str | None, optional): Optional route direction. Defaults to None.
+            rtpidatafeed (str | None, optional): Real-Time Passenger Information data feed name (multi-feed only). Required in multi-feed systems if rt parameter is provided. Defaults to None.
 
         Raises:
             ApiArgumentError: Errors when arguments are invalid.
@@ -447,6 +448,9 @@ class BusTracker:
             if rtdir:
                 params["rtdir"] = rtdir
             params["rt"] = rt
+        
+        if rtpidatafeed:
+            params["rtpidatafeed"] = rtpidatafeed
 
         r = requests.get(self._format_url(ApiRoutes.DETOURS, params))
         return r.json()
