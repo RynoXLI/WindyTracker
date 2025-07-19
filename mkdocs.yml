@@ -1,10 +1,10 @@
-site_name: CTA Tracker
+site_name: WindyTracker
 site_description: 'A Python library for the Chicago Transit Authority (CTA) API'
 site_author: 'Ryan Fogle'
-site_url: https://rynoxli.github.io/cta
+site_url: https://rynoxli.github.io/windytracker
 
-repo_name: RynoXLI/cta
-repo_url: https://github.com/RynoXLI/cta
+repo_name: RynoXLI/windytracker
+repo_url: https://github.com/RynoXLI/windytracker
 
 theme:
   name: material

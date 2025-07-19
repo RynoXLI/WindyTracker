@@ -2,26 +2,28 @@
 
 Auto-generated API documentation for bus tracking functionality.
 
+*WindyTracker uses data provided by CTA*
+
 ## BusTracker
 
-::: cta.bus.bustracker.BusTracker
+::: windytracker.bus.bustracker.BusTracker
 
 ## AsyncBusTracker
 
-::: cta.bus.bustracker.AsyncBusTracker
+::: windytracker.bus.bustracker.AsyncBusTracker
 
 ## TypedBusTracker
 
-::: cta.bus.typedbustracker.TypedBusTracker
+::: windytracker.bus.typedbustracker.TypedBusTracker
 
 ## AsyncTypedBusTracker
 
-::: cta.bus.typedbustracker.AsyncTypedBusTracker
+::: windytracker.bus.typedbustracker.AsyncTypedBusTracker
 
 ## BaseBusTracker
 
-::: cta.bus.base.BaseBusTracker
+::: windytracker.bus.base.BaseBusTracker
 
 ## Bus Models
 
-::: cta.bus.models
+::: windytracker.bus.models

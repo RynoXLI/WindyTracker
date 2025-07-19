@@ -4,9 +4,9 @@ WindyTracker - CTA API client for bus and train tracking.
 This package provides both synchronous and asynchronous clients for the CTA (Chicago Transit Authority) API.
 
 Installation options:
-- uv add windytracker[sync] - For synchronous operations only (uses requests)
-- uv add windytracker[async] - For asynchronous operations only (uses aiohttp)
-- uv add windytracker[all] - For both synchronous and asynchronous operations
+- uv add cta[sync] - For synchronous operations only (uses requests)
+- uv add cta[async] - For asynchronous operations only (uses aiohttp)
+- uv add cta[all] - For both synchronous and asynchronous operations
 
 Legal Notice:
 Data provided by Chicago Transit Authority. WindyTracker is not affiliated with, endorsed by,
@@ -41,4 +41,4 @@ __all__ = [
 
 
 def hello() -> str:
-    return "Hello from WindyTracker!"
+    return "Hello from cta!"

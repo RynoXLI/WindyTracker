@@ -1,6 +1,8 @@
 # Quick Start
 
-Get up and running with CTA Tracker in just a few minutes!
+Get up and running with WindyTracker in just a few minutes!
+
+*Data provided by CTA*
 
 ## Installation
 
@@ -11,8 +13,9 @@ pip install cta[all]  # Includes sync + async support
 
 ### Option 2: Sync or Async Only
 ```bash
-pip install cta[sync]   # Synchronous only
-pip install cta[async]  # Asynchronous only
+uv add windytracker[all]  # All features (recommended)
+uv add windytracker[sync]   # Synchronous only
+uv add windytracker[async]  # Asynchronous only
 ```
 
 ## Get API Key
@@ -31,7 +34,7 @@ pip install cta[async]  # Asynchronous only
     
     ```python
     import os
-    from cta import BusTracker
+    from windytracker import BusTracker
     
     api_key = os.getenv("CTA_API_KEY")
     tracker = BusTracker(key=api_key)
@@ -46,7 +49,7 @@ pip install cta[async]  # Asynchronous only
     ```python
     from dotenv import load_dotenv
     import os
-    from cta import BusTracker
+    from windytracker import BusTracker
     
     load_dotenv()
     api_key = os.getenv("CTA_API_KEY")
@@ -58,7 +61,7 @@ pip install cta[async]  # Asynchronous only
 ### Bus Tracking
 
 ```python
-from cta import BusTracker
+from windytracker import BusTracker
 
 # Initialize
 tracker = BusTracker(key="your_api_key")
@@ -79,7 +82,7 @@ stops = tracker.getstops(rt="22", dir="Northbound")
 ### Train Tracking
 
 ```python
-from cta import TrainTracker
+from windytracker import TrainTracker
 
 # Initialize
 tracker = TrainTracker(key="your_api_key")
@@ -98,7 +101,7 @@ positions = tracker.getpositions(rt="Red")
 
 ```python
 import asyncio
-from cta import AsyncBusTracker
+from windytracker import AsyncBusTracker
 
 async def main():
     async with AsyncBusTracker(key="your_api_key") as tracker:
@@ -130,7 +133,7 @@ asyncio.run(main())
 ## Error Handling
 
 ```python
-from cta import BusTracker
+from windytracker import BusTracker
 
 tracker = BusTracker(key="your_api_key")
 
@@ -189,3 +192,6 @@ station_arrivals(train_tracker, "40380")  # Clark/Lake
 
 - **[Bus API Reference](api/bus.md)** - Detailed bus tracking methods
 - **[Train API Reference](api/train.md)** - Detailed train tracking methods
+
+---
+**Legal Notice**: Data provided by Chicago Transit Authority. WindyTracker is not affiliated with, endorsed by, or sponsored by CTA. Use of CTA data is subject to the [CTA Developer License Agreement](https://www.transitchicago.com/developers/).

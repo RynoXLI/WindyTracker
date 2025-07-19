@@ -1,7 +1,7 @@
 [project]
-name = "cta"
+name = "windytracker"
 version = "0.0.1"
-description = "CTA API client for bus and train tracking"
+description = "WindyTracker - Chicago Transit Authority (CTA) API client for bus and train tracking"
 readme = "README.md"
 authors = [
     { name = "Ryan Fogle", email = "ryanfogle98@gmail.com" }

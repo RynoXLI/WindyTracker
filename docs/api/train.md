@@ -2,26 +2,28 @@
 
 Auto-generated API documentation for train tracking functionality.
 
+*WindyTracker uses data provided by CTA*
+
 ## TrainTracker
 
-::: cta.train.traintracker.TrainTracker
+::: windytracker.train.traintracker.TrainTracker
 
 ## AsyncTrainTracker
 
-::: cta.train.traintracker.AsyncTrainTracker
+::: windytracker.train.traintracker.AsyncTrainTracker
 
 ## TypedTrainTracker
 
-::: cta.train.typedtraintracker.TypedTrainTracker
+::: windytracker.train.typedtraintracker.TypedTrainTracker
 
 ## AsyncTypedTrainTracker
 
-::: cta.train.typedtraintracker.AsyncTypedTrainTracker
+::: windytracker.train.typedtraintracker.AsyncTypedTrainTracker
 
 ## BaseTrainTracker
 
-::: cta.train.base.BaseTrainTracker
+::: windytracker.train.base.BaseTrainTracker
 
 ## Train Models
 
-::: cta.train.models
+::: windytracker.train.models
