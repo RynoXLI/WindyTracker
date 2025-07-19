@@ -24,5 +24,7 @@ build-backend = "hatchling.build"
 dev = [
     "ipykernel>=6.29.5",
     "load-dotenv>=0.1.0",
+    "mkdocs-material>=9.6.15",
+    "mkdocstrings[python]>=0.29.1",
     "ruff>=0.12.4",
 ]

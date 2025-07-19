@@ -1,0 +1,79 @@
+site_name: CTA Tracker
+site_description: 'A Python library for the Chicago Transit Authority (CTA) API'
+site_author: 'Ryan Fogle'
+site_url: https://rynoxli.github.io/cta
+
+repo_name: RynoXLI/cta
+repo_url: https://github.com/RynoXLI/cta
+
+theme:
+  name: material
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    # Palette toggle for dark mode  
+    - scheme: slate
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.indexes
+    - toc.integrate
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search
+  - autorefs
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_toc_entry: true
+            show_bases: true
+            show_root_full_path: false
+            show_object_full_path: false
+            show_category_heading: true
+            members_order: source
+            docstring_section_style: table
+            merge_init_into_class: true
+            extra:
+              show_inheritance: true
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - attr_list
+  - md_in_html
+
+nav:
+  - Home: index.md
+  - Quick Start: quickstart.md
+  - API Reference:
+    - Bus API: api/bus.md
+    - Train API: api/train.md
