@@ -4,143 +4,25 @@ File meant to hold the TrainTracker API objects for CTA train arrivals API.
 Author: Ryan Fogle
 """
 
-import requests
-import aiohttp
-from abc import ABC, abstractmethod
+# Lazy imports with availability checks
+try:
+    import requests
+
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
+    requests = None
+
+try:
+    import aiohttp
+
+    HAS_AIOHTTP = True
+except ImportError:
+    HAS_AIOHTTP = False
+    aiohttp = None
+
 from pydantic import validate_arguments
-from urllib.parse import urlencode
-import copy
-
-
-class ApiRoutes:
-    """Class holding all of the subroutes for the CTA Train Tracker HTTP URL"""
-
-    ARRIVALS = "ttarrivals.aspx"
-    FOLLOW = "ttfollow.aspx"
-    POSITIONS = "ttpositions.aspx"
-
-
-class ApiArgumentError(Exception):
-    """Argument raised when there is an input error"""
-
-
-class BaseTrainTracker(ABC):
-    """Base class for CTA Train Tracker API clients with shared validation logic."""
-
-    @validate_arguments
-    def __init__(
-        self,
-        key,
-        scheme: str = "https",
-        domain: str = "lapi.transitchicago.com",
-    ):
-        """Initialize the base tracker.
-
-        Args:
-            key (_type_): CTA API key
-            scheme (str, optional): 'http' or 'https'. Defaults to "https".
-            domain (str, optional): Set for different domain name. Defaults to "lapi.transitchicago.com".
-        """
-        self._params = {"key": key, "outputType": "JSON"}
-        self._base_url = f"{scheme}://{domain}/api/1.0/"
-
-    @validate_arguments
-    def _format_url(self, subroute: str, params: dict | None = None) -> str:
-        """Format url for api
-
-        Args:
-            subroute (str): Subroute (ie 'ttarrivals.aspx').
-            params (dict | None, optional): GET parameters to be added. Defaults to None.
-
-        Returns:
-            str: URL
-        """
-        if params is None:
-            params = self._params
-
-        return f"{self._base_url}{subroute}?{urlencode(params)}"
-
-    def _validate_arrivals_params(self, mapid, stpid, max, rt):
-        """Validate parameters for arrivals method."""
-        params = copy.deepcopy(self._params)
-
-        if mapid is None and stpid is None:
-            raise ApiArgumentError("Please provide either mapid or stpid argument.")
-        elif mapid is not None and stpid is not None:
-            raise ApiArgumentError(
-                "Please provide either mapid or stpid argument, not both."
-            )
-
-        if mapid is not None:
-            # Validate mapid is 5 digits and in 4xxxx range
-            if not mapid.isdigit() or len(mapid) != 5 or not mapid.startswith("4"):
-                raise ApiArgumentError(
-                    "mapid must be a 5-digit number in the 4xxxx range."
-                )
-            params["mapid"] = mapid
-
-        if stpid is not None:
-            # Validate stpid is 5 digits and in 3xxxx range
-            if not stpid.isdigit() or len(stpid) != 5 or not stpid.startswith("3"):
-                raise ApiArgumentError(
-                    "stpid must be a 5-digit number in the 3xxxx range."
-                )
-            params["stpid"] = stpid
-
-        if max is not None:
-            if not max.isdigit() or int(max) <= 0:
-                raise ApiArgumentError("max must be a positive integer.")
-            params["max"] = max
-
-        if rt is not None:
-            params["rt"] = rt
-
-        return params
-
-    def _validate_follow_params(self, runnumber):
-        """Validate parameters for follow method."""
-        params = copy.deepcopy(self._params)
-
-        if not runnumber:
-            raise ApiArgumentError("Please provide a run number.")
-
-        params["runnumber"] = runnumber
-        return params
-
-    def _validate_positions_params(self, rt):
-        """Validate parameters for positions method."""
-        params = copy.deepcopy(self._params)
-
-        if not rt:
-            raise ApiArgumentError("Please provide at least one route.")
-
-        if isinstance(rt, list):
-            rt = ",".join(rt)
-
-        params["rt"] = rt
-        return params
-
-    # Abstract methods that must be implemented by subclasses
-    @abstractmethod
-    def arrivals(
-        self,
-        mapid: str | None = None,
-        stpid: str | None = None,
-        max: str | None = None,
-        rt: str | None = None,
-    ) -> dict:
-        """Get arrival predictions for train stations"""
-        pass
-
-    @abstractmethod
-    def follow(self, runnumber: str) -> dict:
-        """Follow a specific train by run number"""
-        pass
-
-    @abstractmethod
-    def positions(self, rt: str | list[str]) -> dict:
-        """Get locations for trains on specified routes"""
-        pass
+from .base import BaseTrainTracker, ApiRoutes
 
 
 class TrainTracker(BaseTrainTracker):
@@ -150,6 +32,22 @@ class TrainTracker(BaseTrainTracker):
     >>> cta = TrainTracker(key='secret_key')
     >>> cta.arrivals(mapid='40380')
     """
+
+    def __init__(self, key):
+        """Initialize the synchronous TrainTracker.
+
+        Args:
+            key: CTA API key
+
+        Raises:
+            ImportError: If requests is not installed.
+        """
+        if not HAS_REQUESTS:
+            raise ImportError(
+                "requests is required for synchronous operations. "
+                "Install with: pip install cta[sync] or pip install cta[all]"
+            )
+        super().__init__(key)
 
     @validate_arguments
     def arrivals(
@@ -226,8 +124,29 @@ class AsyncTrainTracker(BaseTrainTracker):
     ...     arrivals = await cta.arrivals(mapid='40380')
     """
 
+    def __init__(self, key):
+        """Initialize the asynchronous AsyncTrainTracker.
+
+        Args:
+            key: CTA API key
+
+        Raises:
+            ImportError: If aiohttp is not installed.
+        """
+        if not HAS_AIOHTTP:
+            raise ImportError(
+                "aiohttp is required for asynchronous operations. "
+                "Install with: pip install cta[async] or pip install cta[all]"
+            )
+        super().__init__(key)
+
     async def __aenter__(self):
         """Async context manager entry."""
+        if not HAS_AIOHTTP:
+            raise ImportError(
+                "aiohttp is required for asynchronous operations. "
+                "Install with: pip install cta[async] or pip install cta[all]"
+            )
         self._session = aiohttp.ClientSession()
         return self
 

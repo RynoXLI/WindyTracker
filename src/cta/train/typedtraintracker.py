@@ -5,87 +5,13 @@ Author: Ryan Fogle
 """
 
 from typing import Union
-from abc import ABC, abstractmethod
 from .traintracker import TrainTracker, AsyncTrainTracker
 from .models import (
     CtattResponse,
     CtattFollowResponse,
     CtattPositionsResponse,
-    TrainTimeResponse,
 )
-from pydantic import ValidationError
-
-
-class ErrorResponse(TrainTimeResponse):
-    """Error response for train API"""
-
-    errCd: str
-    errNm: str
-
-
-class BaseTypedTrainTracker(ABC):
-    """
-    Base class for typed CTA Train Tracker API clients that return Pydantic models.
-
-    This provides:
-    - Type safety and autocompletion
-    - Runtime validation of API responses
-    - Better error messages when API structure changes
-    - Documentation through type hints
-    """
-
-    def _parse_response(self, response_dict: dict, model_class):
-        """Parse API response into typed model with error handling"""
-        try:
-            # For JSON responses, the structure should contain 'ctatt'
-            if isinstance(response_dict, dict) and "ctatt" in response_dict:
-                # Check for API errors first
-                ctatt_data = response_dict["ctatt"]
-                if ctatt_data.get("errCd", "0") != "0":
-                    error_response = ErrorResponse(
-                        errCd=ctatt_data.get("errCd", "999"),
-                        errNm=ctatt_data.get("errNm", "Unknown error"),
-                    )
-                    return error_response
-
-                if model_class == CtattResponse:
-                    return model_class.model_validate(response_dict)
-                elif model_class == CtattFollowResponse:
-                    return model_class.model_validate(response_dict)
-                elif model_class == CtattPositionsResponse:
-                    return model_class.model_validate(response_dict)
-                else:
-                    return model_class.model_validate(ctatt_data)
-            else:
-                # Handle XML responses or other formats
-                return response_dict
-
-        except ValidationError as e:
-            raise ValueError(f"Failed to parse API response: {e}")
-
-    # Abstract methods that must be implemented by subclasses
-    @abstractmethod
-    def arrivals(
-        self,
-        mapid: str | None = None,
-        stpid: str | None = None,
-        max: str | None = None,
-        rt: str | None = None,
-    ) -> Union[CtattResponse, ErrorResponse]:
-        """Get arrival predictions for train stations as typed response"""
-        pass
-
-    @abstractmethod
-    def follow(self, runnumber: str) -> Union[CtattFollowResponse, ErrorResponse]:
-        """Follow a specific train by run number as typed response"""
-        pass
-
-    @abstractmethod
-    def positions(
-        self, rt: str | list[str]
-    ) -> Union[CtattPositionsResponse, ErrorResponse]:
-        """Get locations for trains on specified routes as typed response"""
-        pass
+from .base import BaseTypedTrainTracker, ErrorResponse
 
 
 class TypedTrainTracker(BaseTypedTrainTracker, TrainTracker):

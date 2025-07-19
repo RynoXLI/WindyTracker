@@ -1,17 +1,20 @@
 [project]
 name = "cta"
-version = "0.2.0"
-description = "Add your description here"
+version = "0.0.1"
+description = "CTA API client for bus and train tracking"
 readme = "README.md"
 authors = [
     { name = "Ryan Fogle", email = "ryanfogle98@gmail.com" }
 ]
 requires-python = ">=3.13"
 dependencies = [
-    "aiohttp>=3.10.0",
     "pydantic>=2.11.3",
-    "requests>=2.32.3",
 ]
+
+[project.optional-dependencies]
+sync = ["requests>=2.32.3"]
+async = ["aiohttp>=3.10.0"]
+all = ["requests>=2.32.3", "aiohttp>=3.10.0"]
 
 [build-system]
 requires = ["hatchling"]

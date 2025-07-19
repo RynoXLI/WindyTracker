@@ -169,11 +169,21 @@ wheels = [
 
 [[package]]
 name = "cta"
-version = "0.2.0"
+version = "0.0.1"
 source = { editable = "." }
 dependencies = [
-    { name = "aiohttp" },
     { name = "pydantic" },
+]
+
+[package.optional-dependencies]
+all = [
+    { name = "aiohttp" },
+    { name = "requests" },
+]
+async = [
+    { name = "aiohttp" },
+]
+sync = [
     { name = "requests" },
 ]
 
@@ -186,10 +196,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.10.0" },
+    { name = "aiohttp", marker = "extra == 'all'", specifier = ">=3.10.0" },
+    { name = "aiohttp", marker = "extra == 'async'", specifier = ">=3.10.0" },
     { name = "pydantic", specifier = ">=2.11.3" },
-    { name = "requests", specifier = ">=2.32.3" },
+    { name = "requests", marker = "extra == 'all'", specifier = ">=2.32.3" },
+    { name = "requests", marker = "extra == 'sync'", specifier = ">=2.32.3" },
 ]
+provides-extras = ["sync", "async", "all"]
 
 [package.metadata.requires-dev]
 dev = [

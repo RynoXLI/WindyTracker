@@ -5,7 +5,6 @@ Author: Ryan Fogle
 """
 
 from typing import Union
-from abc import ABC, abstractmethod
 from .bustracker import BusTracker, AsyncBusTracker
 from .models import (
     TimeResponse,
@@ -22,125 +21,7 @@ from .models import (
     LocalesResponse,
     ErrorResponse,
 )
-from pydantic import ValidationError
-
-
-class BaseTypedBusTracker(ABC):
-    """
-    Base class for typed CTA Bus Tracker API clients that return Pydantic models.
-
-    This provides:
-    - Type safety and autocompletion
-    - Runtime validation of API responses
-    - Better error messages when API structure changes
-    - Documentation through type hints
-    """
-
-    def _parse_response(self, response_dict: dict, model_class):
-        """Parse API response into typed model with error handling"""
-        try:
-            # CTA API wraps responses in 'bustime-response'
-            bustime_data = response_dict.get("bustime-response", {})
-
-            # Check for API errors first
-            if "error" in bustime_data:
-                return ErrorResponse.model_validate(bustime_data)
-
-            return model_class.model_validate(bustime_data)
-        except ValidationError as e:
-            raise ValueError(f"Failed to parse API response: {e}")
-
-    # Abstract methods that must be implemented by subclasses
-    @abstractmethod
-    def gettime(self, unixTime: bool = False) -> Union[TimeResponse, ErrorResponse]:
-        """Returns the time of the server as a typed response"""
-        pass
-
-    @abstractmethod
-    def getrtpidatafeeds(self) -> Union[RtpiDataFeedsResponse, ErrorResponse]:
-        """Get real time passenger information feeds as typed response"""
-        pass
-
-    @abstractmethod
-    def getroutes(self) -> Union[RoutesResponse, ErrorResponse]:
-        """Get all available routes as typed response"""
-        pass
-
-    @abstractmethod
-    def getdirections(self, rt: str) -> Union[DirectionsResponse, ErrorResponse]:
-        """Returns available directional routes as typed response"""
-        pass
-
-    @abstractmethod
-    def getvehicles(
-        self,
-        vid: str | list[str] | None = None,
-        rt: str | list[str] | None = None,
-        tmres: str = "s",
-    ) -> Union[VehiclesResponse, ErrorResponse]:
-        """Return vehicles and their real-time data as typed response"""
-        pass
-
-    @abstractmethod
-    def getstops(
-        self,
-        rt: str | None = None,
-        dir: str | None = None,
-        stpid: str | list[str] | None = None,
-    ) -> Union[StopsResponse, ErrorResponse]:
-        """Returns stop information as typed response"""
-        pass
-
-    @abstractmethod
-    def getpredictions(
-        self,
-        stpid: str | list[str] | None = None,
-        rt: str | list[str] | None = None,
-        vid: str | list[str] | None = None,
-        top: int | None = None,
-        tmres: str = "s",
-    ) -> Union[PredictionsResponse, ErrorResponse]:
-        """Get real-time predictions as typed response"""
-        pass
-
-    @abstractmethod
-    def getpatterns(
-        self, pid: str | list[str] | None = None, rt: str | list[str] | None = None
-    ) -> Union[PatternsResponse, ErrorResponse]:
-        """Return route patterns as typed response"""
-        pass
-
-    @abstractmethod
-    def getservicebulletins(
-        self,
-        rt: str | list[str] | None = None,
-        rtdir: str | None = None,
-        stpid: str | list[str] | None = None,
-    ) -> Union[ServiceBulletinsResponse, ErrorResponse]:
-        """Get service bulletins as typed response"""
-        pass
-
-    @abstractmethod
-    def getagencies(self) -> Union[AgenciesResponse, ErrorResponse]:
-        """Get agencies as typed response"""
-        pass
-
-    @abstractmethod
-    def getdetours(
-        self,
-        rt: str | None = None,
-        rtdir: str | None = None,
-        rtpidatafeed: str | None = None,
-    ) -> Union[DetoursResponse, ErrorResponse]:
-        """Get detours as typed response"""
-        pass
-
-    @abstractmethod
-    def getlocalelist(
-        self, inlocalLanguge: bool = False
-    ) -> Union[LocalesResponse, ErrorResponse]:
-        """Get locales list as typed response"""
-        pass
+from .base import BaseTypedBusTracker
 
 
 class TypedBusTracker(BaseTypedBusTracker, BusTracker):
