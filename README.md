@@ -71,9 +71,11 @@ asyncio.run(main())
 | `BusTracker` | Sync | Raw JSON | Simple bus tracking |
 | `AsyncBusTracker` | Async | Raw JSON | Async bus tracking |
 | `TypedBusTracker` | Sync | Pydantic | Type-safe bus tracking |
+| `AsyncTypedBusTracker` | Async | Pydantic | Type-safe async bus tracking |
 | `TrainTracker` | Sync | Raw JSON | Simple train tracking |
 | `AsyncTrainTracker` | Async | Raw JSON | Async train tracking |
 | `TypedTrainTracker` | Sync | Pydantic | Type-safe train tracking |
+| `AsyncTypedTrainTracker` | Async | Pydantic | Type-safe async train tracking |
 
 ## Documentation
 
