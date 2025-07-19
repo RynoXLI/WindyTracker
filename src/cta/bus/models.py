@@ -167,7 +167,7 @@ class Vehicle(BaseModel):
     def validate_coordinates(cls, v: str) -> str:
         """Validate latitude/longitude are valid decimal degrees"""
         try:
-            coord = float(v)
+            coord = float(v)  # noqa: F841
             return v
         except ValueError:
             raise ValueError(f"Coordinate must be a valid decimal number, got: {v}")
