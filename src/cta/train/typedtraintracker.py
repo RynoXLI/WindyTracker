@@ -73,7 +73,7 @@ class TypedTrainTracker(TrainTracker):
         stpid: str | None = None,
         max: str | None = None,
         rt: str | None = None,
-    ) -> Union[CtattResponse, ErrorResponse, dict]:
+    ) -> Union[CtattResponse, ErrorResponse]:
         """Get arrival predictions for train stations as typed response
 
         Args:
@@ -86,17 +86,12 @@ class TypedTrainTracker(TrainTracker):
             CtattResponse with arrival predictions or ErrorResponse if error
         """
         response = super().arrivals(mapid, stpid, max, rt)
-
-        # Handle XML responses (return as-is for now)
-        if isinstance(response, dict) and "xml_response" in response:
-            return response
-
         return self._parse_response(response, CtattResponse)
 
     def follow(
         self,
         runnumber: str,
-    ) -> Union[CtattFollowResponse, ErrorResponse, dict]:
+    ) -> Union[CtattFollowResponse, ErrorResponse]:
         """Follow a specific train by run number as typed response
 
         Args:
@@ -106,17 +101,12 @@ class TypedTrainTracker(TrainTracker):
             CtattFollowResponse with train position and arrival predictions or ErrorResponse if error
         """
         response = super().follow(runnumber)
-
-        # Handle XML responses (return as-is for now)
-        if isinstance(response, dict) and "xml_response" in response:
-            return response
-
         return self._parse_response(response, CtattFollowResponse)
 
     def positions(
         self,
         rt: str | list[str],
-    ) -> Union[CtattPositionsResponse, ErrorResponse, dict]:
+    ) -> Union[CtattPositionsResponse, ErrorResponse]:
         """Get locations for trains on specified routes as typed response
 
         Args:
@@ -126,9 +116,4 @@ class TypedTrainTracker(TrainTracker):
             CtattPositionsResponse with train locations or ErrorResponse if error
         """
         response = super().positions(rt)
-
-        # Handle XML responses (return as-is for now)
-        if isinstance(response, dict) and "xml_response" in response:
-            return response
-
         return self._parse_response(response, CtattPositionsResponse)

@@ -36,19 +36,15 @@ class TrainTracker:
         key,
         scheme: str = "https",
         domain: str = "lapi.transitchicago.com",
-        output_type: str = "json",
     ):
         """init method
 
         Args:
             key (_type_): CTA API key
-            scheme (str, optional): 'http' or 'https'. Defaults to "http".
+            scheme (str, optional): 'http' or 'https'. Defaults to "https".
             domain (str, optional): Set for different domain name. Defaults to "lapi.transitchicago.com".
-            output_type (str, optional): 'json' or 'xml'. Defaults to "json".
         """
-        self._params = {"key": key}
-        if output_type.lower() == "json":
-            self._params["outputType"] = "JSON"
+        self._params = {"key": key, "outputType": "JSON"}
         self._base_url = f"{scheme}://{domain}/api/1.0/"
 
     @validate_arguments
@@ -123,13 +119,7 @@ class TrainTracker:
             params["rt"] = rt
 
         r = requests.get(self._format_url(ApiRoutes.ARRIVALS, params))
-
-        # Handle both JSON and XML responses
-        if "outputType" in self._params and self._params["outputType"] == "JSON":
-            return r.json()
-        else:
-            # For XML responses, return the raw text
-            return {"xml_response": r.text}
+        return r.json()
 
     @validate_arguments
     def follow(
@@ -155,13 +145,7 @@ class TrainTracker:
         params["runnumber"] = runnumber
 
         r = requests.get(self._format_url(ApiRoutes.FOLLOW, params))
-
-        # Handle both JSON and XML responses
-        if "outputType" in self._params and self._params["outputType"] == "JSON":
-            return r.json()
-        else:
-            # For XML responses, return the raw text
-            return {"xml_response": r.text}
+        return r.json()
 
     @validate_arguments
     def positions(
@@ -190,10 +174,4 @@ class TrainTracker:
         params["rt"] = rt
 
         r = requests.get(self._format_url(ApiRoutes.POSITIONS, params))
-
-        # Handle both JSON and XML responses
-        if "outputType" in self._params and self._params["outputType"] == "JSON":
-            return r.json()
-        else:
-            # For XML responses, return the raw text
-            return {"xml_response": r.text}
+        return r.json()
